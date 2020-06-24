@@ -13,23 +13,29 @@ import glob
 import os
 import shutil
 
-from .check import check_sep
+from .check import chk_file
+from .path import add_sep
 
 
-def create_file(file_name):
+def create(file_name):
     """
     创建文件
     :param file_name: 文件名，路径形式
     :return:
     """
-    file_dir = os.path.dirname(file_name)
-    if os.path.exists(file_name) and os.path.isfile(file_name):
-        print("文件已经存在")
-        return
-    if not os.path.exists(file_dir):
-        os.makedirs(file_dir)
-    with open(file_name, 'w') as f:
-        f.close()
+    if chk_file():
+        return True
+    else:
+        try:
+            file_dir = os.path.dirname(file_name)
+            if not os.path.exists(file_dir):
+                os.makedirs(file_dir)
+            with open(file_name, 'w') as f:
+                f.close()
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
 
 def remove(file_path):
@@ -71,7 +77,7 @@ def file_list(path, suffix="*"):
         raise ValueError("suffix should be string, list or tuple")
 
     # 判断末尾文件是否有分隔符，没有则添加
-    path = check_sep(path)
+    path = add_sep(path)
 
     f_list = []
     for suffix in suffixes:
